@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "660397602966",
+    "firebase_url": "https://maxwell-orario-studenti-61c8f-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "maxwell-orario-studenti-61c8f",
+    "storage_bucket": "maxwell-orario-studenti-61c8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:660397602966:android:e6c2b9a0cc815d4019aab7",
+        "android_client_info": {
+          "package_name": "com.tambu.maxwell_orario_studenti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "660397602966-t0an6g1ovr6ovb1a2ljhgrtcfjaq5foe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcb49gVAzUGHuTof8OyUg3SBlRfsrMiiU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "660397602966-t0an6g1ovr6ovb1a2ljhgrtcfjaq5foe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

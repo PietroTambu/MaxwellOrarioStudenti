@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.maxwell_orario_studenti">
-   <application
-        android:label="maxwell_orario_studenti"
+    package="com.tambu.maxwell_orario_studenti">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application
+        android:label="Maxwell Orario Studenti"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
