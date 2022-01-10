@@ -10,34 +10,32 @@ import 'dart:ui';
 import '../style/colors.dart' as color;
 import '../core/globals.dart' as globals;
 import 'dart:developer' as developer;
-import '../components/ElevatedButtonCustom.dart';
+import '../components/elevated_button_custom.dart';
 import '../models/Lessons.dart';
 import '../core/requests.dart';
+import 'settings.dart';
 
 class HomePage extends StatefulWidget {
 
   HomePage({
     Key? key,
     required this.classe,
-    required this.analytics,
-    required this.observer,
   }) : super(key: key);
 
   String classe;
-  final FirebaseAnalytics analytics;
-  final FirebaseAnalyticsObserver observer;
+  final FirebaseAnalytics analytics = globals.analytics;
+  final FirebaseAnalyticsObserver observer = globals.observer;
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-
+  int _selectedIndex = globals.navIndex;
   late Future<Lessons> futureLessons;
 
   int index = 0;
   List days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
-  bool isLoading = globals.isLoading;
 
   Future<void> _testAllEventTypes() async {
     await widget.analytics.logAppOpen();
@@ -45,18 +43,14 @@ class _HomePageState extends State<HomePage> {
 
   _nextDay() {
     setState(() {
-      if (index == 5) {
-        index = 0;
-      } else {
+      if (index < 5) {
         index += 1;
       }
     });
   }
   _prevDay() {
     setState(() {
-      if (index == 0) {
-        index = 5;
-      } else {
+      if (index > 0) {
         index -= 1;
       }
     });
@@ -85,7 +79,14 @@ class _HomePageState extends State<HomePage> {
 
   setLoading(bool value) {
     setState(() {
-      isLoading = value;
+      globals.setLoading(value);
+    });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      // globals.setNavIndex(context, refresh, index);
     });
   }
 
@@ -111,12 +112,14 @@ class _HomePageState extends State<HomePage> {
                   ],
                   begin: const FractionalOffset(0.0, 0.0),
                   end: const FractionalOffset(1.0, 0.0),
-                  stops: [0.0, 1.0],
+                  stops: const [0.0, 1.0],
                   tileMode: TileMode.clamp),
             ),
           ),
         ),
-        body: Container(
+        body:
+        _selectedIndex == 1 ?
+        Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                   colors: [
@@ -125,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                   begin: const FractionalOffset(0.0, 0.0),
                   end: const FractionalOffset(1.0, 0.0),
-                  stops: [0.0, 1.0],
+                  stops: const [0.0, 1.0],
                   tileMode: TileMode.clamp),
             ),
             padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
@@ -166,11 +169,7 @@ class _HomePageState extends State<HomePage> {
                         IconButton(
                             onPressed: () {
                               Navigator.push(context, MaterialPageRoute(
-                                  builder: (_) => ChooseClass(
-                                    notifyParent: refresh,
-                                    analytics: widget.analytics,
-                                    observer: widget.observer
-                                  ))
+                                  builder: (_) => ChooseClass(notifyParent: refresh,))
                               );
                             },
                             icon: Icon(Icons.arrow_forward,
@@ -223,10 +222,10 @@ class _HomePageState extends State<HomePage> {
                                               fontSize: 25,
                                               color: color.AppColor.homePageContainerTextSmall,
                                             ),
-                                            children: const [
+                                            children: [
                                               TextSpan(
-                                                  text: "Gennaio 2022",
-                                                  style: TextStyle(
+                                                  text: globals.getDate(index, 'date'),
+                                                  style: const TextStyle(
                                                     fontSize: 20,
                                                   )
                                               )
@@ -297,6 +296,7 @@ class _HomePageState extends State<HomePage> {
                             topRight: Radius.circular(8),
                             bottomRight: Radius.circular(8),
                           ),
+                          disable: index == 0,
                           child: Container(child:
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -327,6 +327,7 @@ class _HomePageState extends State<HomePage> {
                           width: MediaQuery.of(context).size.width / 2 - 25,
                           height: 45,
                           padding: const EdgeInsets.only(left: 8, right: 0),
+                          disable: index == 5,
                           child: Container(child:
                           Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -342,6 +343,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const SizedBox(width: 8),
                                 const Icon(Icons.arrow_forward_ios, size: 24, color: Colors.white70)
+
                               ]
                           ),
                           ),
@@ -468,6 +470,27 @@ class _HomePageState extends State<HomePage> {
                 ]
             )
         )
+            :
+        Settings(),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.school),
+              label: 'School',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Impostazioni',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: color.AppColor.gradientFirst,
+          onTap: _onItemTapped,
+        ),
     );
   }
 }

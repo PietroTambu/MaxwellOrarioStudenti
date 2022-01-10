@@ -9,15 +9,13 @@ import '../core/globals.dart' as globals;
 
 
 class ChooseClass extends StatefulWidget {
-  const ChooseClass({Key? key,
-    required this.analytics,
-    required this.observer,
+  ChooseClass({Key? key,
     required this.notifyParent
   }) : super(key: key);
 
   final Function() notifyParent;
-  final FirebaseAnalytics analytics;
-  final FirebaseAnalyticsObserver observer;
+  final FirebaseAnalytics analytics = globals.analytics;
+  final FirebaseAnalyticsObserver observer = globals.observer;
 
   @override
   _ChooseClassState createState() => _ChooseClassState();
@@ -25,15 +23,15 @@ class ChooseClass extends StatefulWidget {
 
 
 class _ChooseClassState extends State<ChooseClass> {
-
   late Future<Classes> futureClasses;
 
   _chooseClass(classe) async {
     await globals.updateClass(classe);
-    Navigator.pop(context);
+    globals.goHomePage(context);
     widget.notifyParent();
   }
 
+  @override
   void initState() {
     super.initState();
     futureClasses = fetchClasses();
@@ -43,6 +41,7 @@ class _ChooseClassState extends State<ChooseClass> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // automaticallyImplyLeading: false,
         title: Center(child: const Text('Scegli la tua classe')),
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -131,7 +130,7 @@ class _ChooseClassState extends State<ChooseClass> {
             return Container();
           },
         ),
-      ),
+      )
     );
   }
 }

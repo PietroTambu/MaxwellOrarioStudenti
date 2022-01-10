@@ -1,50 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import './core/globals.dart' as globals;
-import 'pages/home_page.dart';
-import 'pages/error.dart';
+import '../core/activity_handler.dart';
 
 Future<void> main() async {
+  // Widgets initializing
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  final prefs = await SharedPreferences.getInstance();
-  const key = 'defaultClass';
-  final value = prefs.getString(key) ?? '5ALS';
-  print('default Class: $value');
-  globals.defaultClass = value;
 
-  runApp(MyApp(classe: value));
+  // Portrait mode only
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  // Establishing Firebase connection
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
 
-  const MyApp({
-    Key? key,
-    required this.classe,
-  }) : super(key: key);
-
-  final String classe;
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Maxwell Orario Studenti',
-      navigatorObservers: <NavigatorObserver>[observer],
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: LoaderOverlay(
-        child: HomePage(classe: classe, analytics: analytics, observer: observer),
-      )
-    );
+    return const ActivityHandler();
   }
 }
