@@ -20,9 +20,11 @@ class HomePage extends StatefulWidget {
   HomePage({
     Key? key,
     required this.classe,
+    required this.internetConnection
   }) : super(key: key);
 
   String classe;
+  bool internetConnection;
   final FirebaseAnalytics analytics = globals.analytics;
   final FirebaseAnalyticsObserver observer = globals.observer;
 
@@ -121,7 +123,8 @@ class _HomePageState extends State<HomePage> {
         _selectedIndex == 1 ?
         Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient:
+              LinearGradient(
                   colors: [
                     const Color(0xFF6588f4).withOpacity(0.3),
                     const Color(0xff7eb5fd).withOpacity(0.2),
@@ -129,7 +132,8 @@ class _HomePageState extends State<HomePage> {
                   begin: const FractionalOffset(0.0, 0.0),
                   end: const FractionalOffset(1.0, 0.0),
                   stops: const [0.0, 1.0],
-                  tileMode: TileMode.clamp),
+                  tileMode: TileMode.clamp
+              ),
             ),
             padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
             child: Column(
@@ -471,7 +475,9 @@ class _HomePageState extends State<HomePage> {
             )
         )
             :
-        Settings(),
+        Settings(
+          internetConnection: widget.internetConnection
+        ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(

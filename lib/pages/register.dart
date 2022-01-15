@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:maxwell_orario_studenti/core/database.dart';
 import '../style/colors.dart' as color;
 import '../core/globals.dart' as globals;
 
@@ -11,16 +12,12 @@ class Register extends StatefulWidget {
 }
 
 class _Register extends State<Register> {
-  String _userName = '';
-  String _userEmail = '';
-  String _userPassword = '';
   String _error = '';
 
   late FocusNode _userNameFocus;
   late FocusNode _userEmailFocus;
   late FocusNode _userPasswordFocus;
 
-  final RegisterController = TextEditingController();
   final userNameController = TextEditingController();
   final userEmailController = TextEditingController();
   final userPasswordController = TextEditingController();
@@ -31,15 +28,6 @@ class _Register extends State<Register> {
     _userNameFocus = FocusNode();
     _userEmailFocus = FocusNode();
     _userPasswordFocus = FocusNode();
-    RegisterController.addListener(_handleChange);
-  }
-
-  void _handleChange() {
-    setState(() {
-      _userEmail = RegisterController.text;
-      _userPassword = RegisterController.text;
-      _userName = RegisterController.text;
-    });
   }
 
   Future _register (String value) async {
@@ -49,6 +37,11 @@ class _Register extends State<Register> {
         password: userPasswordController.text,
       );
       globals.auth.currentUser?.updateDisplayName(userNameController.text);
+      UserController(globals.auth.currentUser!.uid).setUserData(
+        userNameController.text,
+        userEmailController.text,
+        '5ALS',
+      );
     } on FirebaseAuthException catch (e) {
       setState(() {
         if (e.code == 'weak-password') {

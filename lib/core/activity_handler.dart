@@ -4,6 +4,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:maxwell_orario_studenti/pages/home_page.dart';
 import 'package:maxwell_orario_studenti/pages/welcome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../core/globals.dart' as globals;
 
 class ActivityHandler extends StatefulWidget {
@@ -16,6 +17,7 @@ class ActivityHandler extends StatefulWidget {
 class _ActivityHandlerState extends State<ActivityHandler> {
 
   bool isLoggedIn = globals.isSignedIn;
+  bool internetConnection = globals.internetConnection;
 
   _getDefaultClass () async {
     // Get Default class from SharedPreferences
@@ -38,7 +40,6 @@ class _ActivityHandlerState extends State<ActivityHandler> {
         }
         setState(() {
           isLoggedIn = globals.isSignedIn;
-          print('reloaded logged in');
         });
       });
 
@@ -52,7 +53,6 @@ class _ActivityHandlerState extends State<ActivityHandler> {
         }
         setState(() {
           isLoggedIn = globals.isSignedIn;
-          print('reloaded logged in');
         });
       });
 
@@ -66,16 +66,41 @@ class _ActivityHandlerState extends State<ActivityHandler> {
         }
         setState(() {
           isLoggedIn = globals.isSignedIn;
-          print('reloaded logged in');
         });
       });
+  }
+
+  _connectivityListener() async {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        if (result.toString() != 'ConnectivityResult.none') {
+          globals.internetConnection = true;
+          internetConnection = true;
+        } else {
+          globals.internetConnection = false;
+          internetConnection = false;
+        }
+      });
+
+    });
+  }
+
+  _refreshState() {
+    setState(() {
+      if (isLoggedIn && internetConnection) {
+        print('fetch data from internet');
+      } else if (isLoggedIn && internetConnection == false) {
+        print('sahred preference + fetch json');
+      }
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _getDefaultClass();
     _initializeFirebaseAuth();
+    _connectivityListener();
+    _getDefaultClass();
   }
 
   @override
@@ -91,7 +116,8 @@ class _ActivityHandlerState extends State<ActivityHandler> {
               child:
               isLoggedIn ?
               HomePage(
-                  classe: globals.defaultClass
+                  classe: globals.defaultClass,
+                  internetConnection: internetConnection
               ) :
               const Welcome()
           )
