@@ -3,6 +3,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:maxwell_orario_studenti/core/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
@@ -35,6 +36,7 @@ updateClass(String newClass) async {
     const key = 'defaultClass';
     prefs.setString(key, newClass);
     print('new classe stored: $newClass');
+    UserController(auth.currentUser!.uid).updateUserClasse(newClass);
     defaultClass = newClass;
 }
 
@@ -74,3 +76,20 @@ getDate(int index, String format) {
         return 'invalid props';
     }
 }
+
+getTodayIndex() {
+    final DateTime now = DateTime.now();
+    final DateFormat weekdayFormatter = DateFormat('EEEE');
+    final String today = weekdayFormatter.format(now);
+    final int index = en_days.indexOf(today);
+    if (index == 6) {
+        return 0;
+    } else {
+        return index;
+    }
+}
+
+validateEmail(String email) {
+    return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+}
+

@@ -1,19 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:maxwell_orario_studenti/pages/choose_class.dart';
-import '../firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'dart:ui';
 import '../style/colors.dart' as color;
 import '../core/globals.dart' as globals;
-import 'dart:developer' as developer;
 import '../components/elevated_button_custom.dart';
 import '../models/Lessons.dart';
 import '../core/requests.dart';
-import 'settings.dart';
+import './app_settings.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -41,6 +39,13 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _testAllEventTypes() async {
     await widget.analytics.logAppOpen();
+  }
+
+  changesListener() async {
+    DocumentReference reference = globals.firestore.collection('users').doc(globals.auth.currentUser!.uid);
+    reference.snapshots().listen((event) {
+      refresh();
+    });
   }
 
   _nextDay() {
@@ -96,8 +101,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _testAllEventTypes();
+    changesListener();
     futureLessons = fetchLessons(widget.classe);
-    index = 0;
+    index = globals.getTodayIndex();
   }
 
   @override
@@ -221,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                                   if (snapshot.hasData) {
                                     return RichText(
                                         text: TextSpan(
-                                            text: days[index] + "\n",
+                                            text: days[index] + " \n",
                                             style: TextStyle(
                                               fontSize: 25,
                                               color: color.AppColor.homePageContainerTextSmall,
@@ -474,8 +480,8 @@ class _HomePageState extends State<HomePage> {
                 ]
             )
         )
-            :
-        Settings(
+        :
+        AppSettings(
           internetConnection: widget.internetConnection
         ),
         bottomNavigationBar: BottomNavigationBar(

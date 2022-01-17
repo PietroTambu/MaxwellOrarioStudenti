@@ -5,6 +5,7 @@ import 'package:maxwell_orario_studenti/pages/home_page.dart';
 import 'package:maxwell_orario_studenti/pages/welcome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import '../pages/error.dart';
 import '../core/globals.dart' as globals;
 
 class ActivityHandler extends StatefulWidget {
@@ -85,16 +86,6 @@ class _ActivityHandlerState extends State<ActivityHandler> {
     });
   }
 
-  _refreshState() {
-    setState(() {
-      if (isLoggedIn && internetConnection) {
-        print('fetch data from internet');
-      } else if (isLoggedIn && internetConnection == false) {
-        print('sahred preference + fetch json');
-      }
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -119,7 +110,10 @@ class _ActivityHandlerState extends State<ActivityHandler> {
                   classe: globals.defaultClass,
                   internetConnection: internetConnection
               ) :
+              internetConnection ?
               const Welcome()
+                  :
+              const ErrorPage(error: 1)
           )
     );
   }
