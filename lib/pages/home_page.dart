@@ -102,8 +102,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _testAllEventTypes();
     changesListener();
-    futureLessons = fetchLessons(widget.classe);
     index = globals.getTodayIndex();
+    futureLessons = fetchLessons(widget.classe);
   }
 
   @override
@@ -149,10 +149,10 @@ class _HomePageState extends State<HomePage> {
                         Text(
                             "Classe selezionata:",
                             style: TextStyle(
-                              fontSize: 20,
-                              color: color.AppColor.homePageSubtitle,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.7
+                                fontSize: 20,
+                                color: color.AppColor.homePageSubtitle,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.7
                             )
                         ),
                         Expanded(child: Container()),
@@ -183,11 +183,11 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                             icon: Icon(Icons.arrow_forward,
-                            size: 20,
-                            color: color.AppColor.homePageIcons
+                                size: 20,
+                                color: color.AppColor.homePageIcons
                             )
                         ),
-                    ]
+                      ]
                   ),
                   const SizedBox(height: 10),
                   Container(
@@ -309,7 +309,7 @@ class _HomePageState extends State<HomePage> {
                           disable: index == 0,
                           child: Container(child:
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(Icons.arrow_back_ios, size: 24, color: Colors.white70),
                                 const SizedBox(width: 5),
@@ -431,34 +431,34 @@ class _HomePageState extends State<HomePage> {
                                                   borderRadius: BorderRadius.circular(10),
                                                 ),
                                                 child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      snapshot.data!.week_days[index][i]['subject'],
-                                                      textAlign: TextAlign.center,
-                                                      style: const TextStyle(
-                                                        fontSize: 19,
-                                                        color: Colors.white,
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        snapshot.data!.week_days[index][i]['subject'],
+                                                        textAlign: TextAlign.center,
+                                                        style: const TextStyle(
+                                                          fontSize: 19,
+                                                          color: Colors.white,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Container(
-                                                      child: Row(
-                                                        children: [
-                                                          const Icon(Icons.timer, size: 15, color: Colors.white70),
-                                                          const SizedBox(width: 3),
-                                                          Text(
-                                                            snapshot.data!.week_days[index][i]['lesson_time'],
-                                                            textAlign: TextAlign.center,
-                                                            style: const TextStyle(
-                                                              fontSize: 17,
-                                                              color: Colors.white70
-                                                            ),
-                                                          ),
-                                                        ]
+                                                      Container(
+                                                          child: Row(
+                                                              children: [
+                                                                const Icon(Icons.timer, size: 15, color: Colors.white70),
+                                                                const SizedBox(width: 3),
+                                                                Text(
+                                                                  snapshot.data!.week_days[index][i]['lesson_time'],
+                                                                  textAlign: TextAlign.center,
+                                                                  style: const TextStyle(
+                                                                      fontSize: 17,
+                                                                      color: Colors.white70
+                                                                  ),
+                                                                ),
+                                                              ]
+                                                          )
                                                       )
-                                                    )
 
-                                                ]
+                                                    ]
                                                 )
                                             )
                                           ],
@@ -480,7 +480,7 @@ class _HomePageState extends State<HomePage> {
                 ]
             )
         )
-        :
+            :
         AppSettings(
           internetConnection: widget.internetConnection
         ),
