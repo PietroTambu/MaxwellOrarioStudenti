@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:maxwell_orario_studenti/pages/choose_class.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'dart:ui';
 import '../style/colors.dart' as color;
 import '../core/globals.dart' as globals;
 import '../components/elevated_button_custom.dart';
@@ -18,11 +16,9 @@ class HomePage extends StatefulWidget {
   HomePage({
     Key? key,
     required this.classe,
-    required this.internetConnection
   }) : super(key: key);
 
-  String classe;
-  bool internetConnection;
+  final String classe;
   final FirebaseAnalytics analytics = globals.analytics;
   final FirebaseAnalyticsObserver observer = globals.observer;
 
@@ -31,7 +27,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = globals.navIndex;
+  late int _selectedIndex = 1;
+  late String classe;
   late Future<Lessons> futureLessons;
 
   int index = 0;
@@ -39,13 +36,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _testAllEventTypes() async {
     await widget.analytics.logAppOpen();
-  }
-
-  changesListener() async {
-    DocumentReference reference = globals.firestore.collection('users').doc(globals.auth.currentUser!.uid);
-    reference.snapshots().listen((event) {
-      refresh();
-    });
   }
 
   _nextDay() {
@@ -79,8 +69,17 @@ class _HomePageState extends State<HomePage> {
 
   refresh() {
     setState(() {
-      widget.classe = globals.defaultClass;
-      futureLessons = fetchLessons(widget.classe);
+      print('refresh');
+      classe = globals.defaultClass;
+      futureLessons = fetchLessons(classe);
+    });
+  }
+
+  changesListener() async {
+    Stream reference = globals.firestore.collection('users').doc(globals.auth.currentUser!.uid).snapshots();
+    print('changesListener');
+    reference.listen((event) {
+      refresh();
     });
   }
 
@@ -100,10 +99,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    classe = widget.classe;
     _testAllEventTypes();
     changesListener();
     index = globals.getTodayIndex();
-    futureLessons = fetchLessons(widget.classe);
+    futureLessons = fetchLessons(classe);
   }
 
   @override
@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        body:
+        body: (
         _selectedIndex == 1 ?
         Container(
             decoration: BoxDecoration(
@@ -481,28 +481,27 @@ class _HomePageState extends State<HomePage> {
             )
         )
             :
-        AppSettings(
-          internetConnection: widget.internetConnection
+        const AppSettings()
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school),
-              label: 'School',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Impostazioni',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: color.AppColor.gradientFirst,
-          onTap: _onItemTapped,
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school),
+            label: 'School',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Impostazioni',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: color.AppColor.gradientFirst,
+        onTap: _onItemTapped,
+      ),
     );
   }
 }

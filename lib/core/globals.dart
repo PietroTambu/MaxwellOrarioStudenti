@@ -11,7 +11,9 @@ int navIndex = 1;
 String defaultClass = '5ALS';
 bool isLoading = false;
 bool internetConnection = false;
+bool lessonsLoaded = false;
 List en_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
 
 // Firebase Analytics
 FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -28,7 +30,7 @@ FirebaseFirestore firestore = FirebaseFirestore.instance;
 // methods
 goHomePage (context) {
     navIndex = 1;
-    Navigator.popUntil(context, (Route<dynamic> predicate) => predicate.isFirst);
+    Navigator.pop(context);
 }
 
 updateClass(String newClass) async {
@@ -36,8 +38,8 @@ updateClass(String newClass) async {
     const key = 'defaultClass';
     prefs.setString(key, newClass);
     print('new classe stored: $newClass');
-    UserController(auth.currentUser!.uid).updateUserClasse(newClass);
     defaultClass = newClass;
+    await UserController(auth.currentUser!.uid).updateUserClasse(newClass);
 }
 
 setLoading(bool state) {

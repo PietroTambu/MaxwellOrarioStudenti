@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/Lessons.dart';
 import '../models/Classes.dart';
 import 'package:http/http.dart' as http;
+import '../core/globals.dart' as globals;
 import '../pages/error.dart';
 
 
@@ -40,18 +41,23 @@ fetchClassesFromStorage([int error = 3]) async {
 
 Future<Lessons> fetchLessons(classe) async {
   try {
-    final response = await http
-        .get(Uri.parse('https://maxwell-orario-studenti-61c8f-default-rtdb.europe-west1.firebasedatabase.app/classi/$classe.json'))
-        .timeout(Duration(seconds: 5));
-    if (response.statusCode == 200) {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/$classe.json');
-      final text = response.body;
-      await file.writeAsString(text);
-      print('JSON Saved and Synchronized');
-      return Lessons.fromJson(jsonDecode(response.body));
-    } else {
+    if (globals.lessonsLoaded) {
       return await fetchLessonsFromStorage(classe, 0);
+    } else {
+      final response = await http
+          .get(Uri.parse('https://maxwell-orario-studenti-61c8f-default-rtdb.europe-west1.firebasedatabase.app/classi/$classe.json'))
+          .timeout(Duration(seconds: 5));
+      if (response.statusCode == 200) {
+        final directory = await getApplicationDocumentsDirectory();
+        final file = File('${directory.path}/$classe.json');
+        final text = response.body;
+        await file.writeAsString(text);
+        print('JSON Saved and Synchronized');
+        globals.lessonsLoaded = true;
+        return Lessons.fromJson(jsonDecode(response.body));
+      } else {
+        return await fetchLessonsFromStorage(classe, 0);
+      }
     }
   } on SocketException {
     return await fetchLessonsFromStorage(classe, 1);

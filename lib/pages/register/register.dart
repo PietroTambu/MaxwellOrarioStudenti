@@ -33,7 +33,7 @@ class _Register extends State<Register> {
 
   Future _register (String value) async {
     if (globals.validateEmail(userEmailController.text)) {
-      if (userNameController.text.length > 1) {
+      if (userNameController.text.length > 2) {
         try {
           UserCredential result = await globals.auth.createUserWithEmailAndPassword(
             email: userEmailController.text,
@@ -62,7 +62,7 @@ class _Register extends State<Register> {
         }
       } else {
         setState(() {
-          _error = 'Il nome utente contenere almeno 2 caratteri';
+          _error = 'Il nome utente contenere almeno 3 caratteri';
         });
       }
     } else {
@@ -103,7 +103,7 @@ class _Register extends State<Register> {
             children: [
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.only(left: 10, top: 20),
+                  padding: const EdgeInsets.only(left: 10, top: 20),
                   child: const Text(
                     'Nome Utente:',
                     textAlign: TextAlign.start,
@@ -204,35 +204,61 @@ class _Register extends State<Register> {
                     onSubmitted: _register,
                     controller: userPasswordController,
                   ),
-                ), // PasswordUtenteFIeld
-                _error != '' ?
-                    Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 15),
-                          Text(
-                              _error,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Colors.red,
-                              fontWeight: FontWeight.w500
-                            ),
-                          ),
-                        ],
-                      )
-                    )
-                :
-                    Container(),
-                const SizedBox(height: 15,),
-                IconButton(onPressed:
-                    () { _register('none'); },
-                    icon: const Icon(
-                        Icons.arrow_forward_sharp,
-                        color: Colors.black,
-                        size: 30,
-
+                ), // PasswordUtenteField
+                if (_error != '') Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 20),
+                    Text(
+                        _error,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w500
+                      ),
                     ),
+                    const SizedBox(height: 20),
+                  ],
+                ) else const SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                        decoration: BoxDecoration(
+                          color: color.AppColor.homePagdeDetail,
+                          borderRadius:  BorderRadius.circular(32),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 6,
+                              offset: Offset(3, 6),
+                            ),
+                          ],
+                        ),
+                        padding: EdgeInsets.only(left: 28, right: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                                'Registrati',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500
+                              ),
+                            ),
+                            IconButton(onPressed:
+                                () { _register('none'); },
+                              icon: const Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.black54,
+                                size: 25,
+                              ),
+                            ),
+                          ],
+                        )
+                    )
+                  ],
                 ),
               const SizedBox(height: 20,),
             ],

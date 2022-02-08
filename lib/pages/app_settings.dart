@@ -7,12 +7,9 @@ import '../style/colors.dart' as color;
 import '../core/globals.dart' as globals;
 
 class AppSettings extends StatefulWidget {
-  AppSettings({
+  const AppSettings({
     Key? key,
-    required this.internetConnection
   }) : super(key: key);
-
-  bool internetConnection;
 
   @override
   State<AppSettings> createState() => _AppSettings();
@@ -23,19 +20,113 @@ class _AppSettings extends State<AppSettings> {
   bool signedIn = globals.isSignedIn;
   bool showEmail = false;
 
-  final String _userName = globals.auth.currentUser?.displayName ?? '__error__';
+  String _userName = globals.auth.currentUser?.displayName ?? '__error__';
   final String _userEmail = globals.auth.currentUser?.email ?? '__error__';
+  final userNameController = TextEditingController();
+  final userEmailController = TextEditingController();
 
-  emailVisibilityChange(bool value) {
-    setState(() {
-      showEmail = value;
-    });
+  updateUserName() async {
+    if (userNameController.text.length > 2 && userNameController.text.length < 20) {
+      globals.auth.currentUser?.updateDisplayName(userNameController.text);
+      UserController(globals.auth.currentUser!.uid).updateUserName(userNameController.text);
+      setState(() {
+        _userName = userNameController.text;
+        userNameController.text = '';
+      });
+    } else if (userNameController.text.length < 3) {
+      showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+        title: const Text('Attenzione'),
+        content: const Text('UserName troppo corto'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () { Navigator.pop(context, 'OK'); },
+            child: const Text('OK'),
+          ),
+        ],
+      ));
+    } else {
+      showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+        title: const Text('Attenzione'),
+        content: const Text('UserName troppo lungo'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () { Navigator.pop(context, 'OK'); },
+            child: const Text('OK'),
+          ),
+        ],
+      ));
+    }
+  }
+
+  updateUserEmail() async {
+    bool validEmail = globals.validateEmail(userEmailController.text);
+    if (validEmail && _userEmail != userEmailController.text) {
+      showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+        title: const Text('Attenzione'),
+        content: const Text('Una volta cambiato l\'indirizzo email sarà necessario autenticarsi nuovamente.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              await globals.auth.currentUser!.updateEmail(userEmailController.text);
+              await UserController(globals.auth.currentUser!.uid).updateUserEmail(userEmailController.text.toLowerCase());
+              Navigator.pop(context);
+              globals.auth.signOut();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ));
+    } else {
+      showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+        title: const Text('Attenzione'),
+        content: const Text('l\'indirizzo email inserito non è valido.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {Navigator.pop(context); userEmailController.text = '';},
+            child: const Text('OK'),
+          ),
+        ],
+      ));
+    }
+  }
+
+  resetPassword() async {
+    await globals.auth.sendPasswordResetEmail(email: _userEmail);
+    showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+      title: const Text('Attenzione'),
+      content: Text('Una Mail è stata inviata a: $_userEmail. \n\nDopo aver reimpostato la password si consiglia di ri-autenticarsi.'),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () async {
+            Navigator.pop(context);
+          },
+          child: const Text('OK'),
+        ),
+      ],
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        decoration: BoxDecoration(
+          gradient:
+          LinearGradient(
+              colors: [
+                const Color(0xFF6588f4).withOpacity(0.3),
+                const Color(0xff7eb5fd).withOpacity(0.2),
+              ],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(1.0, 0.0),
+              stops: const [0.0, 1.0],
+              tileMode: TileMode.clamp
+          ),
+        ),
         padding: const EdgeInsets.only(bottom: 15, top: 15, left: 10, right: 10),
         child: Center(
           child: Column(
@@ -67,9 +158,9 @@ class _AppSettings extends State<AppSettings> {
               ExpansionTile(
                 title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Text(
-                        'Nome Utente:',
+                        _userName,
                         style: const TextStyle(
                           fontSize: 20,
                         ),
@@ -78,24 +169,16 @@ class _AppSettings extends State<AppSettings> {
                     ]
                 ),
                 children: <Widget>[
-                  Text(
-                    _userName,
-                    style: const TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                  const SizedBox(height: 15),
                   TextField(
                     decoration: const InputDecoration(
-                      hintText: 'Inserisci il nome utente per cambiarlo',
+                      hintText: 'Inserisci un nuovo nome utente',
                     ),
-                    onChanged: (String value) {
-                      print(value);
-                    },
+                    textAlign: TextAlign.center,
+                    controller: userNameController,
                   ),
                   ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('Cambia nome utente')
+                      onPressed: updateUserName,
+                      child: const Text('Cambia Username')
                   )
                 ],
               ),
@@ -105,8 +188,8 @@ class _AppSettings extends State<AppSettings> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: const [
                       Text(
-                        'Email Utente:',
-                        style: const TextStyle(
+                        'Email:',
+                        style: TextStyle(
                           fontSize: 20,
                         ),
                         textAlign: TextAlign.center,
@@ -123,37 +206,36 @@ class _AppSettings extends State<AppSettings> {
                   const SizedBox(height: 15),
                   TextField(
                     decoration: const InputDecoration(
-                      hintText: 'Inserisci la tua email per cambiarla',
+                      hintText: 'Inserisci una nuova email per cambiarla',
                     ),
-                    onChanged: (String value) {
-                      print(value);
-                    },
+                    textAlign: TextAlign.center,
+                    controller: userEmailController,
                   ),
                   ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('Cambia')
+                      onPressed: updateUserEmail,
+                      child: const Text('Cambia Email')
                   )
                 ],
               ),
-              SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  const Text(
-                    'Resetta la Password:',
-                    style: const TextStyle(
-                      fontSize: 20,
+              const SizedBox(height: 15),
+              Container(
+                margin: const EdgeInsets.only(left: 15, right: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Resetta la Password:',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  ElevatedButton(onPressed: () {
-                    globals.auth.sendPasswordResetEmail(email: _userEmail);
-                  }, child: Text('Invia Mail'))
-                ],
+                    ElevatedButton(onPressed: resetPassword,
+                        child: const Text('Invia Mail')
+                    )
+                  ],
+                ),
               ),
-              ElevatedButton(onPressed: () {
-                UserController(globals.auth.currentUser!.uid).updateUserName('userName');
-              }, child: Text('update Username'))
             ]
           ),
         ),

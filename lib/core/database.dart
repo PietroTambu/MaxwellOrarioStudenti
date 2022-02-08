@@ -13,7 +13,7 @@ class UserController {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   setUserData(String userName, String email, String classe) async {
-    return await users.doc(uid).set({
+    await users.doc(uid).set({
       'userName': userName,
       'email': email,
       'classe': classe
@@ -22,21 +22,21 @@ class UserController {
 
   updateUserName(String userName) async {
     print(uid);
-    return await users.doc(uid).update({
+    await users.doc(uid).update({
       'userName': userName
     });
   }
 
   updateUserEmail(String email) async {
     print(uid);
-    return await users.doc(uid).update({
+    await users.doc(uid).update({
       'email': email
     });
   }
 
   updateUserClasse(String classe) async {
     print(uid);
-    return await users.doc(uid).update({
+    await users.doc(uid).update({
       'classe': classe
     });
   }

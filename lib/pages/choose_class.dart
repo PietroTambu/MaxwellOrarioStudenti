@@ -28,7 +28,7 @@ class _ChooseClassState extends State<ChooseClass> {
 
   _chooseClass(classe) async {
     await globals.updateClass(classe);
-    globals.goHomePage(context);
+    Navigator.pop(context);
   }
 
   @override

@@ -19,7 +19,7 @@ class _WelcomeState extends State<Welcome> {
           Text('Welcome'),
           ElevatedButton(onPressed: () {
             Navigator.push(context, MaterialPageRoute(
-                builder: (_) => const Login())
+                builder: (_) => const LoginScreen())
             );
             },
               child: Text('Accedi')

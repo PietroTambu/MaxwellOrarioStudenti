@@ -5,6 +5,7 @@ import 'package:maxwell_orario_studenti/pages/home_page.dart';
 import 'package:maxwell_orario_studenti/pages/welcome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:maxwell_orario_studenti/components/test.dart';
 import '../pages/error.dart';
 import '../core/globals.dart' as globals;
 
@@ -17,8 +18,8 @@ class ActivityHandler extends StatefulWidget {
 
 class _ActivityHandlerState extends State<ActivityHandler> {
 
-  bool isLoggedIn = globals.isSignedIn;
-  bool internetConnection = globals.internetConnection;
+  late bool isLoggedIn = false;
+  late bool internetConnection = false;
 
   _getDefaultClass () async {
     // Get Default class from SharedPreferences
@@ -89,9 +90,9 @@ class _ActivityHandlerState extends State<ActivityHandler> {
   @override
   void initState() {
     super.initState();
+    _getDefaultClass();
     _initializeFirebaseAuth();
     _connectivityListener();
-    _getDefaultClass();
   }
 
   @override
@@ -108,7 +109,6 @@ class _ActivityHandlerState extends State<ActivityHandler> {
               isLoggedIn ?
               HomePage(
                   classe: globals.defaultClass,
-                  internetConnection: internetConnection
               ) :
               internetConnection ?
               const Welcome()
