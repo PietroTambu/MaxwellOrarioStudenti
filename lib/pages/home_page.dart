@@ -39,24 +39,20 @@ class _HomePageState extends State<HomePage> {
   List days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
   bool isLoading = globals.isLoading;
 
-  Future<void> _testAllEventTypes() async {
+  Future<void> logAppOpen() async {
     await widget.analytics.logAppOpen();
   }
 
   _nextDay() {
     setState(() {
-      if (index == 5) {
-        index = 0;
-      } else {
+      if (index < 5) {
         index += 1;
       }
     });
   }
   _prevDay() {
     setState(() {
-      if (index == 0) {
-        index = 5;
-      } else {
+      if (index > 0) {
         index -= 1;
       }
     });
@@ -92,9 +88,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _testAllEventTypes();
+    logAppOpen();
     futureLessons = fetchLessons(widget.classe);
-    index = 0;
+    index = globals.getTodayIndex();
   }
 
   @override
@@ -218,15 +214,15 @@ class _HomePageState extends State<HomePage> {
                                   if (snapshot.hasData) {
                                     return RichText(
                                         text: TextSpan(
-                                            text: days[index] + "\n",
+                                            text: days[index] + " \n",
                                             style: TextStyle(
                                               fontSize: 25,
                                               color: color.AppColor.homePageContainerTextSmall,
                                             ),
-                                            children: const [
+                                            children: [
                                               TextSpan(
-                                                  text: "Gennaio 2022",
-                                                  style: TextStyle(
+                                                  text: globals.getDate(index, 'date'),
+                                                  style: const TextStyle(
                                                     fontSize: 20,
                                                   )
                                               )
@@ -297,9 +293,10 @@ class _HomePageState extends State<HomePage> {
                             topRight: Radius.circular(8),
                             bottomRight: Radius.circular(8),
                           ),
+                          disable: index == 0,
                           child: Container(child:
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(Icons.arrow_back_ios, size: 24, color: Colors.white70),
                                 const SizedBox(width: 5),
@@ -327,6 +324,7 @@ class _HomePageState extends State<HomePage> {
                           width: MediaQuery.of(context).size.width / 2 - 25,
                           height: 45,
                           padding: const EdgeInsets.only(left: 8, right: 0),
+                          disable: index == 5,
                           child: Container(child:
                           Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -342,6 +340,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const SizedBox(width: 8),
                                 const Icon(Icons.arrow_forward_ios, size: 24, color: Colors.white70)
+
                               ]
                           ),
                           ),
@@ -419,34 +418,34 @@ class _HomePageState extends State<HomePage> {
                                                   borderRadius: BorderRadius.circular(10),
                                                 ),
                                                 child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      snapshot.data!.week_days[index][i]['subject'],
-                                                      textAlign: TextAlign.center,
-                                                      style: const TextStyle(
-                                                        fontSize: 19,
-                                                        color: Colors.white,
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        snapshot.data!.week_days[index][i]['subject'],
+                                                        textAlign: TextAlign.center,
+                                                        style: const TextStyle(
+                                                          fontSize: 19,
+                                                          color: Colors.white,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Container(
-                                                      child: Row(
-                                                        children: [
-                                                          const Icon(Icons.timer, size: 15, color: Colors.white70),
-                                                          const SizedBox(width: 3),
-                                                          Text(
-                                                            snapshot.data!.week_days[index][i]['lesson_time'],
-                                                            textAlign: TextAlign.center,
-                                                            style: const TextStyle(
-                                                              fontSize: 17,
-                                                              color: Colors.white70
-                                                            ),
-                                                          ),
-                                                        ]
+                                                      Container(
+                                                          child: Row(
+                                                              children: [
+                                                                const Icon(Icons.timer, size: 15, color: Colors.white70),
+                                                                const SizedBox(width: 3),
+                                                                Text(
+                                                                  snapshot.data!.week_days[index][i]['lesson_time'],
+                                                                  textAlign: TextAlign.center,
+                                                                  style: const TextStyle(
+                                                                      fontSize: 17,
+                                                                      color: Colors.white70
+                                                                  ),
+                                                                ),
+                                                              ]
+                                                          )
                                                       )
-                                                    )
 
-                                                ]
+                                                    ]
                                                 )
                                             )
                                           ],

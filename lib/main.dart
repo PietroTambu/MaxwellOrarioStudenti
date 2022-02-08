@@ -6,13 +6,17 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'firebase_options.dart';
 import './core/globals.dart' as globals;
 import 'pages/home_page.dart';
+import 'package:flutter/services.dart';
 import 'pages/error.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   final prefs = await SharedPreferences.getInstance();
   const key = 'defaultClass';
   final value = prefs.getString(key) ?? '5ALS';
