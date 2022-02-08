@@ -130,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                   Row(
                       children: [
                         Text(
-                            "Classe selezionata:",
+                            "Classe corrente:",
                             style: TextStyle(
                               fontSize: 20,
                               color: color.AppColor.homePageSubtitle,
