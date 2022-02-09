@@ -7,6 +7,7 @@ import 'firebase_options.dart';
 import './core/globals.dart' as globals;
 import 'pages/home_page.dart';
 import 'package:flutter/services.dart';
+import 'dart:ui';
 import 'pages/error.dart';
 
 Future<void> main() async {
@@ -18,12 +19,23 @@ Future<void> main() async {
   );
 
   final prefs = await SharedPreferences.getInstance();
-  const key = 'defaultClass';
-  final value = prefs.getString(key) ?? '5ALS';
-  print('default Class: $value');
-  globals.defaultClass = value;
 
-  runApp(MyApp(classe: value));
+  const defClass = 'defaultClass';
+  const colorMode = 'colorMode';
+  final defaultClass = prefs.getString(defClass) ?? 'None';
+  final colorModePref = prefs.getString(colorMode) ?? 'dark';
+
+  if (defaultClass == 'None') {
+    globals.defaultClass = '5ALS';
+    globals.firstAccess = true;
+  } else {
+    globals.defaultClass = defaultClass;
+    globals.firstAccess = false;
+  }
+  print('default Class: ${globals.defaultClass}');
+  globals.mode = colorModePref;
+
+  runApp(MyApp(classe: defaultClass == 'None' ? '5ALS' : defaultClass));
 }
 
 class MyApp extends StatelessWidget {
@@ -43,9 +55,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Maxwell Orario Studenti',
       navigatorObservers: <NavigatorObserver>[observer],
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: LoaderOverlay(
         child: HomePage(classe: classe, analytics: analytics, observer: observer),
       )

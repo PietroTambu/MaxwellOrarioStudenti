@@ -5,13 +5,24 @@ import 'package:intl/intl.dart';
 String defaultClass = '5ALS';
 bool isLoading = false;
 List en_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+String mode = 'light';
+bool firstAccess = true;
 
 updateClass(String newClass) async {
+    firstAccess = false;
     final prefs = await SharedPreferences.getInstance();
     const key = 'defaultClass';
     prefs.setString(key, newClass);
     print('new classe stored: $newClass');
     defaultClass = newClass;
+}
+
+updateColorMode() async {
+    mode = mode == 'light' ? 'dark' : 'light';
+    final prefs = await SharedPreferences.getInstance();
+    const key = 'colorMode';
+    prefs.setString(key, mode);
+    print('changed colorMode: $mode');
 }
 
 setLoading(bool state) {

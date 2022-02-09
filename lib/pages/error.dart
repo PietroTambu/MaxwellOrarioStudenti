@@ -51,32 +51,12 @@ class _ErrorPageState extends State<ErrorPage> {
         appBar: AppBar(
           title: Center(child: Text('Maxwell Orario Studenti')),
           flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    const Color(0xff0f17ad).withOpacity(0.6),
-                    const Color(0xFF6588f4),
-                  ],
-                  begin: const FractionalOffset(0.0, 0.0),
-                  end: const FractionalOffset(1.0, 0.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp),
-            ),
+            color: color.AppColorDarkMode.appBar,
           ),
         ),
-        backgroundColor: color.AppColor.homePageBackground,
+        backgroundColor: color.AppColorDarkMode.background,
         body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFF6588f4).withOpacity(0.3),
-                    const Color(0xff7eb5fd).withOpacity(0.2),
-                  ],
-                  begin: const FractionalOffset(0.0, 0.0),
-                  end: const FractionalOffset(1.0, 0.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp),
-            ),
+            color: color.AppColorDarkMode.background,
             padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
             child: Column(
                 children: [
@@ -84,12 +64,7 @@ class _ErrorPageState extends State<ErrorPage> {
                     child: Center(
                       child: Container(
                         decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                color.AppColor.gradientFirst.withOpacity(0.9),
-                                color.AppColor.gradientSecond,
-                              ],
-                            ),
+                            color: color.AppColorDarkMode.primary,
                             borderRadius: BorderRadius.circular(15)
                         ),
                         width: MediaQuery.of(context).size.width * 0.8,
@@ -99,11 +74,11 @@ class _ErrorPageState extends State<ErrorPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
+                              Text(
                                 'Si è verificato un errore',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color: color.AppColorDarkMode.primaryText,
                                     fontSize: 24,
                                     fontWeight: FontWeight.w700
                                 ),
@@ -117,20 +92,20 @@ class _ErrorPageState extends State<ErrorPage> {
                                     SizedBox(height: 10),
                                     Row(
                                       children: [
-                                        const Text(
+                                        Text(
                                           "Codice: ",
                                           style: TextStyle(
                                             fontSize: 18,
                                             letterSpacing: 0.75,
-                                            color: Colors.white70
+                                            color: color.AppColorDarkMode.secondaryText,
                                           ),
                                         ),
                                         Text(
                                           errorCodes[widget.error][0],
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w700,
-                                                color: Colors.white,
+                                                color: color.AppColorDarkMode.primaryText,
                                                 letterSpacing: 1
                                             )
                                         )
@@ -139,20 +114,20 @@ class _ErrorPageState extends State<ErrorPage> {
                                     SizedBox(height: 10),
                                     Row(
                                       children: [
-                                        const Text(
+                                        Text(
                                           "Causa: ",
                                           style: TextStyle(
                                               fontSize: 18,
                                               letterSpacing: 0.75,
-                                              color: Colors.white70
+                                              color: color.AppColorDarkMode.secondaryText
                                           ),
                                         ),
                                         Text(
                                             errorCodes[widget.error][1],
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w700,
-                                                color: Colors.white,
+                                                color: color.AppColorDarkMode.primaryText,
                                                 letterSpacing: 1
                                             )
                                         )
@@ -161,10 +136,10 @@ class _ErrorPageState extends State<ErrorPage> {
                                     SizedBox(height: 10),
                                     Text(
                                         errorCodes[widget.error][2],
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w500,
-                                            color: Colors.white70,
+                                            color: color.AppColorDarkMode.secondaryText,
                                           letterSpacing: 0.3
                                         )
                                     )
