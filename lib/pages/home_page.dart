@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:maxwell_orario_studenti/pages/choose_class.dart';
+import 'package:maxwell_orario_studenti/pages/welcome.dart';
 import '../firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -405,7 +406,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _chooseClass() {
+  Widget _welcome() {
     return Container(
         color: mode == 'dark' ? color.AppColorDarkMode.background : color.AppColorLightMode.background,
         padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
@@ -434,6 +435,7 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  const SizedBox(width: 45,),
                   Text(
                       'Maxwell Orario Studenti',
                       style: TextStyle(
@@ -442,7 +444,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   IconButton(
                     icon: Icon(
-                      Icons.remove_red_eye,
+                      mode == 'dark' ? Icons.wb_sunny : Icons.brightness_2,
                       color: mode == 'dark' ? color.AppColorDarkMode.secondaryText : color.AppColorLightMode.secondaryText,
                     ),
                     onPressed: changeMode,
@@ -457,7 +459,12 @@ class _HomePageState extends State<HomePage> {
         ),
         body:
         firstAccess ?
-        _chooseClass()
+        Welcome(
+          mode: mode,
+          analytics: widget.analytics,
+          observer: widget.observer,
+          notifyParent: refresh,
+        )
             :
         _homePage()
     );
